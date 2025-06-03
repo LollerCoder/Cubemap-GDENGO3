@@ -45,9 +45,9 @@ void AppWindow::updateQuadPosition()
 
 	cc.m_world.setScale(Vector3D(1, 1, 1));
 
-	temp.setIdentity();
+	/*temp.setIdentity();
 	temp.setRotationZ(m_delta_scale);
-	cc.m_world *= temp;
+	cc.m_world *= temp;*/
 	
 	temp.setIdentity();
 	temp.setRotationY(m_delta_scale);
@@ -59,14 +59,16 @@ void AppWindow::updateQuadPosition()
 
 
 
-	cc.m_view.setIdentity();
-	cc.m_proj.setOrthoLH
+	cc.m_view = camera.GetViewMatrix();
+	cc.m_proj = camera.GetProjectionMatrix();
+		
+		/*setOrthoLH
 	(
 		(this->getClientWindowRect().right - this->getClientWindowRect().left) / 400.f,
 		(this->getClientWindowRect().bottom - this->getClientWindowRect().top) / 400.f,
 		-4.f,
 		4.f
-	);
+	);*/
 
 	m_cb->update(GraphicsEngine::get()->getImmediateDeviceContext(), &cc);
 }
@@ -142,6 +144,10 @@ void AppWindow::onCreate()
 
 	m_cb = GraphicsEngine::get()->createConstantBuffer();
 	m_cb->load(&cc, sizeof(constant));
+
+	camera.SetPosition(0.0f, 0.0f, -2.0f);
+	camera.SetProjectionValues(90.0f, static_cast<float>(rc.right - rc.left) / static_cast<float>(rc.bottom - rc.top), 0.1f, 1000.0f);
+	camera.SetLookAtPos(XMFLOAT3(0.0f,0.f,0.0f));
 }
 
 void AppWindow::onUpdate()

@@ -1,4 +1,6 @@
 #pragma once
+#include <DirectXMath.h>
+using namespace DirectX;
 
 
 
@@ -29,6 +31,16 @@ public:
 		v.m_z = start.m_z * (1.0f - delta) + end.m_z * (delta);
 		return v;
 	}
+
+	void operator =(DirectX::XMVECTOR vec) {
+		DirectX::XMFLOAT3 temp;
+		DirectX::XMStoreFloat3(&temp, vec);
+		this->m_x = temp.x;
+		this->m_y = temp.y;
+		this->m_z = temp.z;
+		
+	}
+
 
 	~Vector3D()
 	{

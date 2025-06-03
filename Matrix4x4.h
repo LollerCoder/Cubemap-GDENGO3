@@ -1,6 +1,8 @@
 #pragma once
 #include <memory>
 #include "Vector3D.h"
+#include <DirectXMath.h>
+using namespace DirectX;
 
 
 class Matrix4x4
@@ -90,6 +92,22 @@ public:
 	{
 
 	}
+
+	void operator =(DirectX::XMMATRIX matrix) {
+		
+		DirectX::XMFLOAT4X4 temp;
+		DirectX::XMStoreFloat4x4(&temp, matrix); // Extracts matrix values
+
+		// Copy values into your m_mat array
+		for (int row = 0; row < 4; ++row) {
+			for (int col = 0; col < 4; ++col) {
+				m_mat[row][col] = temp.m[row][col];
+			}
+		}
+		
+	}
+
+
 
 private:
 	float m_mat[4][4] = { };

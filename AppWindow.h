@@ -11,6 +11,10 @@
 #include <vector>
 #include "Quads.h"
 #include "Cube.h"
+#include "Camera.h"
+#include <DirectXMath.h>
+using namespace DirectX;
+
 
 class AppWindow : public Window
 {
@@ -48,6 +52,8 @@ private:
 
 	float m_delta_pos;
 	float m_delta_scale;
+
+	Camera camera;
 
 	std::vector<Quads> quadList = {};
 	std::vector<Cube> cubeList = {};
