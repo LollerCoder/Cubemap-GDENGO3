@@ -55,3 +55,8 @@ bool SwapChain::release()
 	delete this;
 	return true;
 }
+
+ID3D11RenderTargetView* SwapChain::getRTV()
+{
+	return m_rtv;
+}

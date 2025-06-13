@@ -157,17 +157,91 @@ void AppWindow::onCreate()
 	m_cb = GraphicsEngine::get()->createConstantBuffer();
 	m_cb->load(&cc, sizeof(constant));
 
-	camera.SetPosition(1.0f, 1.0f, -1.0f);
+	camera.SetPosition(1.5f, 0.1f, -1.0f);
 	camera.SetProjectionValues(90.0f, static_cast<float>(rc.right - rc.left) / static_cast<float>(rc.bottom - rc.top), 0.1f, 100.0f);
 	camera.SetLookAtPos(XMFLOAT3(0.0f,0.f,0.0f));
+
+
+	//Describe our Depth/Stencil Buffer
+	D3D11_TEXTURE2D_DESC depthStencilDesc;
+	depthStencilDesc.Width = rc.right - rc.left;
+	depthStencilDesc.Height = rc.bottom - rc.top;
+	depthStencilDesc.MipLevels = 1;
+	depthStencilDesc.ArraySize = 1;
+	depthStencilDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+	depthStencilDesc.SampleDesc.Count = 1;
+	depthStencilDesc.SampleDesc.Quality = 0;
+	depthStencilDesc.Usage = D3D11_USAGE_DEFAULT;
+	depthStencilDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
+	depthStencilDesc.CPUAccessFlags = 0;
+	depthStencilDesc.MiscFlags = 0;
+
+	HRESULT hr = GraphicsEngine::get()->m_d3d_device->CreateTexture2D(&depthStencilDesc, NULL, &this->depthStencilBuffer);
+	if (FAILED(hr)) //If error occurred
+	{
+	}
+		
+
+	hr = GraphicsEngine::get()->m_d3d_device->CreateDepthStencilView(depthStencilBuffer, NULL, &this->depthStencilView);
+	if (FAILED(hr)) //If error occurred
+	{
+		
+		
+	}
+
+	/*GraphicsEngine::get()->getImmediateDeviceContext()->m_device_context->OMSetRenderTargets(1, m_swap_chain->getRTV(), this->depthStencilView.Get());*/
+
+	//Create depth stencil state
+	D3D11_DEPTH_STENCIL_DESC depthstencildesc;
+	ZeroMemory(&depthstencildesc, sizeof(D3D11_DEPTH_STENCIL_DESC));
+
+	depthstencildesc.DepthEnable = true;
+	depthstencildesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK::D3D11_DEPTH_WRITE_MASK_ALL;
+	depthstencildesc.DepthFunc = D3D11_COMPARISON_FUNC::D3D11_COMPARISON_LESS_EQUAL;
+
+	hr = GraphicsEngine::get()->m_d3d_device->CreateDepthStencilState(&depthstencildesc, &this->depthStencilState);
+	if (FAILED(hr))
+	{
+	
+	}
+
+	//Create the Viewport
+	D3D11_VIEWPORT viewport;
+	ZeroMemory(&viewport, sizeof(D3D11_VIEWPORT));
+
+	viewport.TopLeftX = 0;
+	viewport.TopLeftY = 0;
+	viewport.Width = rc.right - rc.left;
+	viewport.Height = rc.bottom - rc.top;
+	viewport.MinDepth = 0.0f;
+	viewport.MaxDepth = 1.0f;
+
+	//Set the Viewport
+	GraphicsEngine::get()->getImmediateDeviceContext()->m_device_context->RSSetViewports(1, &viewport);
+
+	//Create Rasterizer State
+	D3D11_RASTERIZER_DESC rasterizerDesc;
+	ZeroMemory(&rasterizerDesc, sizeof(D3D11_RASTERIZER_DESC));
+
+	rasterizerDesc.FillMode = D3D11_FILL_MODE::D3D11_FILL_SOLID;
+	rasterizerDesc.CullMode = D3D11_CULL_MODE::D3D11_CULL_BACK;
+	hr = GraphicsEngine::get()->m_d3d_device->CreateRasterizerState(&rasterizerDesc, &this->rasterizerState);
+	if (FAILED(hr))
+	{
+		
+		
+	}
 }
 
 void AppWindow::onUpdate()
 {
 	//set color here
 	GraphicsEngine::get()->getImmediateDeviceContext()->clearRenderTargetColor(this->m_swap_chain,
-		.4, 0.4, 0, 1);
-
+		.4, 0.4, 0, 1, this->depthStencilView);
+	
+	GraphicsEngine::get()->getImmediateDeviceContext()->m_device_context->RSSetState(this->rasterizerState);
+	GraphicsEngine::get()->getImmediateDeviceContext()->m_device_context->ClearDepthStencilView(this->depthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
+	GraphicsEngine::get()->getImmediateDeviceContext()->m_device_context->OMSetDepthStencilState(this->depthStencilState, 0);
 	RECT rc = this->getClientWindowRect();
 	GraphicsEngine::get()->getImmediateDeviceContext()->setViewportSize(rc.right - rc.left, rc.bottom - rc.top);
 

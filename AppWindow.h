@@ -13,6 +13,7 @@
 #include "Cube.h"
 #include "Camera.h"
 #include <DirectXMath.h>
+#include < d3d11.h >
 using namespace DirectX;
 
 
@@ -57,5 +58,12 @@ private:
 
 	std::vector<Quads> quadList = {};
 	std::vector<Cube> cubeList = {};
+
+	ID3D11DepthStencilView* depthStencilView = nullptr;
+	ID3D11Texture2D* depthStencilBuffer = nullptr;
+	ID3D11DepthStencilState* depthStencilState = nullptr;
+	
+
+	ID3D11RasterizerState* rasterizerState;
 };
 

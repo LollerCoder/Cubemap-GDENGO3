@@ -32,11 +32,11 @@ public:
 
 	//singleton
 	static GraphicsEngine* get();
-
+	ID3D11Device* m_d3d_device;
 private:
 	DeviceContext* m_imm_device_context;
 
-	ID3D11Device* m_d3d_device;
+	
 	D3D_FEATURE_LEVEL m_feature_level;
 
 

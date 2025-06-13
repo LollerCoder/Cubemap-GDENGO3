@@ -13,6 +13,7 @@ public:
 
 	bool release();
 
+	ID3D11RenderTargetView* getRTV();
 private:
 	IDXGISwapChain* m_swap_chain;
 	ID3D11RenderTargetView* m_rtv;
