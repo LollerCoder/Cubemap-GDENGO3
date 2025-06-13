@@ -49,16 +49,16 @@ void AppWindow::updateQuadPosition()
 	temp.setRotationZ(m_delta_scale);
 	cc.m_world *= temp;*/
 	
-	temp.setIdentity();
+	/*temp.setIdentity();
 	temp.setRotationY(m_delta_scale);
 	cc.m_world *= temp;
 	
 	temp.setIdentity();
 	temp.setRotationX(m_delta_scale);
-	cc.m_world *= temp;
+	cc.m_world *= temp;*/
 
 
-
+	cc.m_world.setIdentity();
 	cc.m_view = camera.GetViewMatrix();
 	cc.m_proj = camera.GetProjectionMatrix();
 		
@@ -96,16 +96,28 @@ void AppWindow::onCreate()
 	std::vector<Vector3D> colors;
 	std::vector<Vector3D> colors2;
 	colors.push_back(Vector3D(1, 0, 0));
-	colors.push_back(Vector3D(0, 1, 0));
-	colors.push_back(Vector3D(0, 0, 1));
-	colors.push_back(Vector3D(1, 1, 0));
+	colors.push_back(Vector3D(1,0 , 0));
+	colors.push_back(Vector3D(1, 0, 0));
+	colors.push_back(Vector3D(1, 0, 0));
 
-	colors2.push_back(Vector3D(1, 0, 1));
-	colors2.push_back(Vector3D(1, 1, 0));
-	colors2.push_back(Vector3D(1, 0, 1));
-	colors2.push_back(Vector3D(0, 1, 0));
+	colors2.push_back(Vector3D(1, 0, 0));
+	colors2.push_back(Vector3D(1, 0, 0));
+	colors2.push_back(Vector3D(1, 0, 0));
+	colors2.push_back(Vector3D(1, 0, 0));
 	//                         w     h     cx   cy    list
-	//quadList.push_back(Quads(0.3f, 0.3f, 0.6f, 0.6f,colors, colors2));
+	quadList.push_back(Quads(1.0f, 1.0f, 0.0f, 0.0f,colors, colors2));
+
+	colors.clear();
+	colors2.clear();
+	colors.push_back(Vector3D(0, 1, 0));
+	colors.push_back(Vector3D(0, 1, 0));
+	colors.push_back(Vector3D(0, 1, 0));
+	colors.push_back(Vector3D(0, 1, 0));
+
+	colors2.push_back(Vector3D(0, 1, 0));
+	colors2.push_back(Vector3D(0, 1, 0));
+	colors2.push_back(Vector3D(0, 1, 0));
+	colors2.push_back(Vector3D(0, 1, 0));
 	// //                       w     h     d     cx   cy     cz      list
 	cubeList.push_back(Cube(0.3f, 0.3f, 0.3f, 0.f, 0.f, 0.f, colors, colors2));
 	/*
@@ -122,10 +134,10 @@ void AppWindow::onCreate()
 	colors2.push_back({ 0,1,1 });
 	quadList.push_back(Quads(0.7f, 0.5f, 0.2f, -0.5f, -0.2f, 0.8f, colors, colors2));
 	*/
-	/*
+	
 	for (int i = 0; i < quadList.size();i++) {
 		quadList[i].createBuffer(&shader_byte_code, &size_shader);
-	}*/
+	}
 	
 	for (int i = 0; i < cubeList.size();i++) {
 		cubeList[i].createBuffer(&shader_byte_code, &size_shader);
@@ -145,8 +157,8 @@ void AppWindow::onCreate()
 	m_cb = GraphicsEngine::get()->createConstantBuffer();
 	m_cb->load(&cc, sizeof(constant));
 
-	camera.SetPosition(0.0f, 0.0f, -2.0f);
-	camera.SetProjectionValues(90.0f, static_cast<float>(rc.right - rc.left) / static_cast<float>(rc.bottom - rc.top), 0.1f, 1000.0f);
+	camera.SetPosition(1.0f, 1.0f, -1.0f);
+	camera.SetProjectionValues(90.0f, static_cast<float>(rc.right - rc.left) / static_cast<float>(rc.bottom - rc.top), 0.1f, 100.0f);
 	camera.SetLookAtPos(XMFLOAT3(0.0f,0.f,0.0f));
 }
 
@@ -169,10 +181,10 @@ void AppWindow::onUpdate()
 	GraphicsEngine::get()->getImmediateDeviceContext()->setVertexShader(m_vs);
 	GraphicsEngine::get()->getImmediateDeviceContext()->setPixelShader(m_ps);
 
-	/*
+	
 	for (int i = 0; i < quadList.size();i++) {
 		quadList[i].draw();
-	}*/
+	}
 	
 	for (int i = 0; i < cubeList.size();i++) {
 		cubeList[i].draw();
